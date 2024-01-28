@@ -78,28 +78,28 @@ def top_divers(request):
 def add_diver(request):
     if request.method == "POST":
         diver_name = request.POST.get("diver_name")
-        # Add other fields as necessary
 
-        # Check if diver already exists
+        # Validate the input
+        if not diver_name:
+            return JsonResponse({"message": "Diver name is required"}, status=400)
+
         if Diver.objects.filter(name=diver_name).exists():
-            return JsonResponse({'message': 'Diver already exists'}, status=400)
-        
-        new_diver = Diver(name = diver_name)
-        new_diver.save()
-        return JsonResponse({'message':'Diver added successfully'}, status=200)
+            return JsonResponse({"message": "Diver already exists"}, status=400)
 
-        # try:
-        #     # Attempt to create a new User and Diver
-        #     user = User.objects.create_user(username=username)
-        #     Diver.objects.create(user=user)
-        #     messages.success(request, "Diver added successfully")
-        #     return redirect("add_diver")  # Redirect to another page
+        try:
+            # Create a new Diver instance
+            diver = Diver(name=diver_name)
+            diver.save()
 
-        # except IntegrityError:
-        #     messages.error(request, "A user with that username already exists.")
-    return JsonResponse({'message': 'Invalid request'}, status=400)
+            # Return a success response
+            return JsonResponse({"message": "Diver added successfully"}, status=200)
 
-    # return render(request, "bingo/add_diver.html")
+        except Exception as e:
+            # Handle any exceptions that occur
+            return JsonResponse({"message": str(e)}, status=500)
+
+    # If not a POST request, you might redirect or show an error
+    return JsonResponse({"message": "Invalid request"}, status=400)
 
 
 def get_creatures_from_sheet():

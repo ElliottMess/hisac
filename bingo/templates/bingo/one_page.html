@@ -43,23 +43,6 @@
         })
         .catch(error => console.error('Error:', error));
     });
-    document.getElementById('add_diver').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var data = new FormData(this);
-        fetch("{% url 'add_diver' %}", {
-            method: 'POST',
-            body: data,
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status == 200) {
-                alert(data.message); // Success message
-            } else {
-                alert('Error: ' + data.message); // Error message
-            }})
-        .catch(error => console.error('Error:', error));
-    });
-
-    </script>
+</script>
     
 {% endblock %}

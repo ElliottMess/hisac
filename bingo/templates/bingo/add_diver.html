@@ -1,17 +1,62 @@
 <h2>Add New Diver</h2>
-{% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div class="message {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    </div>
-{% endif %}
-<form method="post" id = "add_diver">
+<div id="message-box"></div> <!-- Message box for displaying responses -->
+
+<form method="post" id="add_diver">
     {% csrf_token %}
-    <form method="post">
-        {% csrf_token %}
-        <label for="diver_name">Name:</label><br>
-        <input type="text" id="diver_name" name="diver_name" required><br>
-        <!-- Add other fields as needed -->
-        <input type="submit" value="Add Diver">
+    <label for="diver_name">Name:</label><br>
+    <input type="text" id="diver_name" name="diver_name" required><br>
+    <!-- Add other fields as needed -->
+    <input type="submit" value="Add Diver">
 </form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Function to get CSRF token from cookie
+        function getCsrfToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
+        // Common function to handle form submission
+        function handleFormSubmit(formId, url) {
+            const form = document.getElementById(formId);
+            const messageBox = document.getElementById('message-box');
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCsrfToken()
+                    }
+                })
+                    .then(response => {
+                        const status = response.status;
+                        return response.json().then(data => {
+                            if (!response.ok) {
+                                // If the response is an error, throw the data
+                                throw { message: data.message, status };
+                            }
+                            return { data, status }; // For successful responses
+                        });
+                    })
+                    .then(({ data, status }) => {
+                        messageBox.innerText = data.message; // Display the success message
+                        messageBox.style.color = status === 200 ? 'green' : 'red';
+                    })
+                    .catch(error => {
+                        messageBox.innerText = error.message; // Display the custom error message
+                        messageBox.style.color = 'red';
+                    });
+            });
+        }
+
+        // Handling add_observation form
+        handleFormSubmit('add_observation', "{% url 'add_observation' %}");
+
+        // Handling add_diver form
+        handleFormSubmit('add_diver', "{% url 'add_diver' %}");
+    });
+</script>
