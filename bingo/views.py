@@ -9,6 +9,7 @@ from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
+from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 
 from .models import Creature, Diver, Observation
@@ -103,41 +104,48 @@ def add_diver(request):
 
 
 def get_creatures_from_sheet():
-    # Path to your service account key
     service_account_file = "hisac/bingo-408514-4bd65e543418.json"
 
-    creds = None
-    creds, _ = google.auth.load_credentials_from_file(service_account_file)
+    # Define the scope and create credentials
+    scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+    creds = Credentials.from_service_account_file(service_account_file, scopes=scopes)
+
+    # Build the service
     service = build("sheets", "v4", credentials=creds)
 
-    # Call the Sheets API
+    # Specify your Google Sheet ID and the range to read
+    spreadsheet_id = "1qAM8jLKCEASjyBjVTqXLgt8YjJRm9OtlIzGQ_xuiGeg"
+    range_name = "Sheet1!A2:D"  # Adjust as per your sheet's structure
+
+    # Make the API request
     sheet = service.spreadsheets()
-    spreadsheet_id = "1qAM8jLKCEASjyBjVTqXLgt8YjJRm9OtlIzGQ_xuiGeg"  # Extract from your spreadsheet URL
-    range_name = "Sheet1!A2:D"  # Adjust the range accordingly
     result = (
         sheet.values().get(spreadsheetId=spreadsheet_id, range=range_name).execute()
     )
     values = result.get("values", [])
 
-    creatures = []
-    if values:
+    # Define your column headers here (adjust as per your sheet's actual headers)
+    headers = ["species", "latin_name", "points", "category"]
+
+    if not values:
+        print("No data found.")
+        return []
+    else:
+        # Convert each row into a dictionary
+        creatures = []
         for row in values:
-            # Assuming the spreadsheet has Species, Latin Name, Points, Category in this order
-            creature = {
-                "species": row[0],
-                "latin_name": row[1],
-                "points": int(row[2]),  # Convert points to integer
-                "category": row[3],
-            }
+            # Create a dictionary for each row, zip with headers
+            creature = dict(zip(headers, row))
             creatures.append(creature)
 
-    return creatures
+        return creatures
 
 
 def add_observation(request):
     divers = Diver.objects.all()
 
     creatures = get_creatures_from_sheet()
+    print(creatures)
 
     # Add or update creatures in the Creature table
     for creature in creatures:
@@ -163,9 +171,21 @@ def add_observation(request):
     if request.method == "POST":
         diver_id = request.POST.get("diver")
         creature_id = request.POST.get("creature")
-        date_observed = request.POST.get(
-            "date_observed"
-        )  # get date_observed from POST data
+        try:
+            date_observed = datetime.strptime(
+                request.POST.get("date_observed"), "%Y-%m-%d"
+            ).date()
+            if date_observed > datetime.now().date():
+                return JsonResponse(
+                    {"message": "The observation date cannot be in the future."},
+                    status=400,
+                )
+
+        except ValueError:
+            return JsonResponse(
+                {"message": "Invalid date format. Please use YYYY-MM-DD."},
+                status=400,
+            )
 
         # Validate the input
         if not diver_id or not creature_id or not date_observed:
@@ -181,12 +201,15 @@ def add_observation(request):
         Observation.objects.create(
             diver=diver, creature=creature, date_observed=date_observed
         )
-        if request.is_ajax():
-            return JsonResponse({"message": "Observation submitted successfully!"})
-        # Add a success message
+
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            # This is an AJAX request
+            return JsonResponse(
+                {"message": "Observation submitted successfully!"}
+            )  # Add a success message
         messages.success(request, "Observation submitted successfully!")
 
-        # return redirect("add_observation")
+        return redirect("add_observation")
 
     return render(
         request,
