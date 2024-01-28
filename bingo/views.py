@@ -104,7 +104,7 @@ def add_diver(request):
 
 def get_creatures_from_sheet():
     # Path to your service account key
-    service_account_file = "bingo-408514-4bd65e543418.json"
+    service_account_file = "./bingo-408514-4bd65e543418.json"
 
     creds = None
     creds, _ = google.auth.load_credentials_from_file(service_account_file)
