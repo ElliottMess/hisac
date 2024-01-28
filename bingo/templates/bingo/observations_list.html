@@ -1,0 +1,20 @@
+<h2>Last 30 observations</h2>
+{% if observations %}
+    <table>
+    <tr>
+        <th>Creature</th>
+        <th>Observer</th>
+        <th>Date observed</th>
+    </tr>
+    {% for observation in observations %}
+    <tr>
+        <td>{{ observation.creature }}</td>
+        <td>{{ observation.diver.name }}</td>
+        <td>{{ observation.date_observed }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+
+    {% else %}
+    <p>No observations available.</p>
+    {% endif %}

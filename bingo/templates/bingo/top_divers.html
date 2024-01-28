@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <div class="leaderboard">
+
+        <div class="clear">
+        {% if top_divers %}
+        <table>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Points</th>
+            </tr>
+            {% for diver in top_divers %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ diver.diver__name }}</td>
+                <td>{{ diver.total_points }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No diver data available for this period.</p>
+        {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>

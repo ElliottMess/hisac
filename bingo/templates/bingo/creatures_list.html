@@ -1,0 +1,17 @@
+<table>
+    <tr>
+        <th>Species</th>
+        <th>Species</th>
+        <th>Latin Name</th>
+        <th>Points</th>
+        <th>Category</th>
+    </tr>
+    {% for creature in creatures %}
+    <tr>
+        <td>{{ creature.species }}</td>
+        <td>{{ creature.latin_name }}</td>
+        <td>{{ creature.points }}</td>
+        <td>{{ creature.category }}</td>
+    </tr>
+    {% endfor %}
+</table>

@@ -1,0 +1,29 @@
+<h2>Add Observation</h2>
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+<form method="post" id = "add_observation">
+    {% csrf_token %}
+
+    <select id="diver" name="diver">
+        <option value="">Select a diver</option>
+        {% for diver in divers %}
+        <option value="{{ diver.id }}">{{ diver.name }}</option>
+        {% endfor %}
+    </select></br>
+    <select id="creature" name="creature">
+        <option value="">Select a species</option>
+        {% for creature in creatures %}
+        <option value="{{ creature.species }}">{{ creature.species }}</option>
+        {% endfor %}
+    </select><br>
+
+    <label for="date_observed">Date observed:</label>
+    <input type="date" id="date_observed" name="date_observed">
+    <br>
+    <input type="submit" value="Submit Observation"></br>
+</form>

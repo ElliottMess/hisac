@@ -1,0 +1,65 @@
+{% extends 'bingo/base.html' %}
+{% load static %}
+{% block content %}
+<!-- Main Content -->
+
+<div class="page-container"> <!-- Flex container -->
+
+    <!-- Main content -->
+    <div class="main-content">
+        <h2>Top Divers</h2>
+        <div class="tabs" data-url-top-divers="{% url 'top_divers' %}">
+            <div class="tab" data-period="week">This Week</div>
+            <div class="tab active" data-period="month">This Month</div>
+            <div class="tab" data-period="last_six_months">Last 6 months</div>
+            <div class="tab" data-period="ever">Ever</div>
+        </div>
+        <div id="top-divers-container">
+            {% include "bingo/top_divers.html" %}
+        </div>
+
+        <div id="observations-container">
+            {% include "bingo/observations_list.html" %}
+        </div>
+        <div id = "add-observation" class="sidebar-expanded">
+            {% include "bingo/add_observation.html" %}
+        </div>
+        <div id="add-observation-button" class="sidebar-expanded">
+            {% include "bingo/add_diver.html" %}
+    </div>
+</div>
+<script>
+    document.getElementById('add_observation').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var data = new FormData(this);
+        fetch("{% url 'add_observation' %}", {
+            method: 'POST',
+            body: data,
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display the success message
+            alert(data.message);
+        })
+        .catch(error => console.error('Error:', error));
+    });
+    document.getElementById('add_diver').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var data = new FormData(this);
+        fetch("{% url 'add_diver' %}", {
+            method: 'POST',
+            body: data,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status == 200) {
+                alert(data.message); // Success message
+            } else {
+                alert('Error: ' + data.message); // Error message
+            }})
+        .catch(error => console.error('Error:', error));
+    });
+
+    </script>
+    
+{% endblock %}

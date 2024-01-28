@@ -1,0 +1,17 @@
+<h2>Add New Diver</h2>
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+<form method="post" id = "add_diver">
+    {% csrf_token %}
+    <form method="post">
+        {% csrf_token %}
+        <label for="diver_name">Name:</label><br>
+        <input type="text" id="diver_name" name="diver_name" required><br>
+        <!-- Add other fields as needed -->
+        <input type="submit" value="Add Diver">
+</form>
