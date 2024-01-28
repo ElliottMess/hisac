@@ -145,7 +145,6 @@ def add_observation(request):
     divers = Diver.objects.all()
 
     creatures = get_creatures_from_sheet()
-    print(creatures)
 
     # Add or update creatures in the Creature table
     for creature in creatures:
@@ -189,18 +188,35 @@ def add_observation(request):
 
         # Validate the input
         if not diver_id or not creature_id or not date_observed:
-            return HttpResponseBadRequest("Invalid input")
+            return JsonResponse(
+                {"message": "Invalid input"},
+                status=400,
+            )
 
         try:
             diver = Diver.objects.get(id=diver_id)
             creature = Creature.objects.get(species=creature_id)
         except (Diver.DoesNotExist, Creature.DoesNotExist):
-            return HttpResponseBadRequest("Diver or Creature not found")
+            return JsonResponse(
+                {"message": "Creature or diver does not exist"},
+                status=400,
+            )
 
-        # Create a new observation
-        Observation.objects.create(
-            diver=diver, creature=creature, date_observed=date_observed
-        )
+        try:
+            # Create a new Diver instance
+            observation = Observation(
+                diver=diver, creature=creature, date_observed=date_observed
+            )
+            observation.save()
+
+            # Return a success response
+            return JsonResponse(
+                {"message": "Observation added successfully"}, status=200
+            )
+
+        except Exception as e:
+            # Handle any exceptions that occur
+            return JsonResponse({"message": str(e)}, status=500)
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             # This is an AJAX request
@@ -209,13 +225,8 @@ def add_observation(request):
             )  # Add a success message
         messages.success(request, "Observation submitted successfully!")
 
-        return redirect("add_observation")
-
-    return render(
-        request,
-        "bingo/add_observation.html",
-        {"divers": divers, "creatures": creatures},
-    )
+    # If not a POST request, you might redirect or show an error
+    return JsonResponse({"message": "Invalid request"}, status=400)
 
 
 def creatures_list(request):

@@ -6,7 +6,7 @@
         {% endfor %}
     </div>
 {% endif %}
-<form method="post" id = "add_observation">
+<form method="post" id="add_observation">
     {% csrf_token %}
 
     <select id="diver" name="diver">
@@ -14,7 +14,7 @@
         {% for diver in divers %}
         <option value="{{ diver.id }}">{{ diver.name }}</option>
         {% endfor %}
-    </select></br>
+    </select><br>
     <select id="creature" name="creature">
         <option value="">Select a species</option>
         {% for creature in creatures %}
@@ -23,7 +23,15 @@
     </select><br>
 
     <label for="date_observed">Date observed:</label>
-    <input type="date" id="date_observed" name="date_observed">
-    <br>
-    <input type="submit" value="Submit Observation"></br>
+    <input type="date" id="date_observed" name="date_observed"><br>
+    <input type="submit" value="Submit Observation"><br>
 </form>
+
+<div id="message-box"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Handling add_observation form
+        handleFormSubmit('add_observation', "{% url 'add_observation' %}");
+    });
+</script>

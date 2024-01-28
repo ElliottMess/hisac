@@ -10,53 +10,7 @@
 </form>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Function to get CSRF token from cookie
-        function getCsrfToken() {
-            return document.querySelector('[name=csrfmiddlewaretoken]').value;
-        }
-
-        // Common function to handle form submission
-        function handleFormSubmit(formId, url) {
-            const form = document.getElementById(formId);
-            const messageBox = document.getElementById('message-box');
-
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-
-                fetch(url, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': getCsrfToken()
-                    }
-                })
-                    .then(response => {
-                        const status = response.status;
-                        return response.json().then(data => {
-                            if (!response.ok) {
-                                // If the response is an error, throw the data
-                                throw { message: data.message, status };
-                            }
-                            return { data, status }; // For successful responses
-                        });
-                    })
-                    .then(({ data, status }) => {
-                        messageBox.innerText = data.message; // Display the success message
-                        messageBox.style.color = status === 200 ? 'green' : 'red';
-                    })
-                    .catch(error => {
-                        messageBox.innerText = error.message; // Display the custom error message
-                        messageBox.style.color = 'red';
-                    });
-            });
-        }
-
-        // Handling add_observation form
-        handleFormSubmit('add_observation', "{% url 'add_observation' %}");
-
-        // Handling add_diver form
+    document.addEventListener("DOMContentLoaded", function () {        // Handling add_diver form
         handleFormSubmit('add_diver', "{% url 'add_diver' %}");
     });
 </script>

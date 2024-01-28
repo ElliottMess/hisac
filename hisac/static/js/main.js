@@ -21,14 +21,43 @@ $(document).ready(function () {
 
 });
 
-// Sidebar toggle
-// $(document).ready(function toggleSidebar() {
-//     var sidebar = document.getElementById("sidebar");
-//     if (sidebar.classList.contains("sidebar-collapsed")) {
-//         sidebar.classList.remove("sidebar-collapsed");
-//         sidebar.classList.add("sidebar-expanded");
-//     } else {
-//         sidebar.classList.remove("sidebar-expanded");
-//         sidebar.classList.add("sidebar-collapsed");
-//     }
-// });
+function getCsrfToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+// Common function to handle form submission
+function handleFormSubmit(formId, url) {
+    const form = document.getElementById(formId);
+    const messageBox = document.getElementById('message-box');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCsrfToken()
+            }
+        })
+            .then(response => {
+                const status = response.status;
+                return response.json().then(data => {
+                    if (!response.ok) {
+                        // If the response is an error, throw the data
+                        throw { message: data.message, status };
+                    }
+                    return { data, status }; // For successful responses
+                });
+            })
+            .then(({ data, status }) => {
+                messageBox.innerText = data.message; // Display the success message
+                messageBox.style.color = status === 200 ? 'green' : 'red';
+            })
+            .catch(error => {
+                messageBox.innerText = error.message; // Display the custom error message
+                messageBox.style.color = 'red';
+            });
+    });
+}
