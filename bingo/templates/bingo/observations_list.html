@@ -1,20 +1,36 @@
-<h2>Last 30 observations</h2>
-{% if observations %}
-    <table>
-    <tr>
-        <th>Creature</th>
-        <th>Observer</th>
-        <th>Date observed</th>
-    </tr>
-    {% for observation in observations %}
-    <tr>
-        <td>{{ observation.creature }}</td>
-        <td>{{ observation.diver.name }}</td>
-        <td>{{ observation.date_observed }}</td>
-    </tr>
-    {% endfor %}
-    </table>
-
+<div class="mb-4">
+    <h2>Last 30 observations</h2>
+    {% if observations %}
+        <div class="table-responsive">
+            <table id="observationTable" class="table table-striped table-bordered table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>Creature</th>
+                        <th>Observer</th>
+                        <th>Date observed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for observation in observations %}
+                        <tr>
+                            <td>{{ observation.creature }}</td>
+                            <td>{{ observation.diver.name }}</td>
+                            <td>{{ observation.date_observed }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
-    <p>No observations available.</p>
+        <p>No observations available.</p>
     {% endif %}
+</div>
+<script>
+    $(document).ready(function() {
+        $('#observationTable').DataTable({
+            "pageLength": 30, // Sets the initial page length (number of rows per page)
+            "order": [[2, "desc"]] // This line is optional, it specifies initial sorting column and order
+        });
+    });
+    </script>
+    

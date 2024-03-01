@@ -6,6 +6,7 @@
     {% endfor %}
 </div>
 {% endif %}
+<div class="mb-4">
 <form method="post" id="add_observation">
     {% csrf_token %}
 
@@ -26,7 +27,7 @@
     <input type="date" id="date_observed" name="date_observed"><br>
     <input type="submit" value="Submit Observation"><br>
 </form>
-
+</div>
 <div id="message-box"></div>
 
 <script>
