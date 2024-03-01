@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}HISAC Bingo{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
     <!-- Include jQuery -->
@@ -33,11 +34,12 @@
     {% block extra_js %}{% endblock %}
 </body>
 <footer>
+    <div></div>
+    <div></div>
 
     <a href="https://github.com/ElliottMess/hisac/issues/new" class="github-issue-button" target="_blank">
-        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Icon">
-        Submit an Issue
-    </a>
+        Submit an Issue on GitHub
+    </a><br>
 </footer>
 
 </html>
