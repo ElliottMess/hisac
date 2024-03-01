@@ -73,3 +73,7 @@ body {
 .github-issue-button:hover {
     background-color: #218838;
 }
+.github-issue-button img {
+    width: 24px; /* Adjust based on your preference */
+    margin-right: 8px;
+}

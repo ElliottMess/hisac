@@ -1,10 +1,10 @@
 <h2>Add Observation</h2>
 {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div class="message {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    </div>
+<div class="messages">
+    {% for message in messages %}
+    <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
 {% endif %}
 <form method="post" id="add_observation">
     {% csrf_token %}
@@ -18,7 +18,7 @@
     <select id="creature" name="creature">
         <option value="">Select a species</option>
         {% for creature in creatures %}
-        <option value="{{ creature.species }}">{{ creature.species }}</option>
+        <option value="{{ creature.species }}">{{ creature.species }} ({{ creature.category }}) - {{creature.points}} points</option>
         {% endfor %}
     </select><br>
 
@@ -34,4 +34,21 @@
         // Handling add_observation form
         handleFormSubmit('add_observation', "{% url 'add_observation' %}");
     });
+    // Initialize Select2 for the creature dropdown
+    $('#creature').select2({
+        placeholder: "Select a species",
+        allowClear: true
+    });
+    $('#diver').select2({
+        placeholder: "Select a diver",
+        allowClear: true
+    });
+    // Set today's date as the default for date_observed
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    today = yyyy + '-' + mm + '-' + dd;
+    document.getElementById('date_observed').value = today;
 </script>

@@ -10,6 +10,10 @@
     {% block extra_css %}{% endblock %}
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <!-- Include Select2 JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 </head>
 
 <body>
@@ -29,8 +33,11 @@
     {% block extra_js %}{% endblock %}
 </body>
 <footer>
-    <a href="https://github.com/ElliottMess/hisac/issues/new" target="_blank" class="github-issue-button">
-        Submit an Issue on GitHub
+
+    <a href="https://github.com/ElliottMess/hisac/issues/new" class="github-issue-button" target="_blank">
+        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Icon">
+        Submit an Issue
     </a>
 </footer>
+
 </html>

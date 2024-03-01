@@ -6,14 +6,21 @@ class Diver(models.Model):
     name = models.CharField(max_length=100)
     # Other fields...
 
+    class Meta:
+        ordering = ["name"]
+
     def __str__(self):
-        return self.name if self.name else 'No User'
+        return self.name if self.name else "No User"
+
 
 class Creature(models.Model):
     species = models.CharField(max_length=100, null=True)
     latin_name = models.CharField(max_length=100)
     points = models.IntegerField()
     category = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ["category", "species"]
 
     # Other fields...
     def __str__(self):

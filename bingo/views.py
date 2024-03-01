@@ -167,6 +167,19 @@ def add_observation(request):
                 category=creature["category"],
             )
 
+    # Now, fetch and group creatures by categories for the dropdown
+    grouped_creatures = Creature.objects.prefetch_related("category").order_by(
+        "category__name", "species"
+    )
+
+    # Prepare categories and their creatures for the template
+    categories_with_creatures = {}
+    for creature in grouped_creatures:
+        category_name = creature.category.name
+        if category_name not in categories_with_creatures:
+            categories_with_creatures[category_name] = []
+        categories_with_creatures[category_name].append(creature)
+
     if request.method == "POST":
         diver_id = request.POST.get("diver")
         creature_id = request.POST.get("creature")
