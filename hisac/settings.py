@@ -11,13 +11,13 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 from pathlib import Path
 
 from django.conf import settings
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Quick-start development settings - unsuitable for production
@@ -27,7 +27,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 SECRET_KEY = "django-insecure-l7qgx!o57%l&+j&a$geqfw3+dtpt1dl4@+@b&*^1gui7fce-%g"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["hisac.pythonanywhere.com", "localhost", "127.0.0.1"]
 
