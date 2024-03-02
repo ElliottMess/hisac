@@ -12,6 +12,7 @@ from django.template.loader import render_to_string
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 
+from .forms import DiverForm
 from .models import Creature, Diver, Observation
 
 
@@ -24,6 +25,7 @@ def one_page(request):
         "observations": last_30_observations,
         "creatures": creatures,
         "divers": divers,
+        "diver_form": DiverForm(),
     }
 
     return render(request, "bingo/one_page.html", context)
@@ -78,29 +80,29 @@ def top_divers(request):
 
 def add_diver(request):
     if request.method == "POST":
-        diver_name = request.POST.get("diver_name")
-
-        # Validate the input
-        if not diver_name:
-            return JsonResponse({"message": "Diver name is required"}, status=400)
-
-        if Diver.objects.filter(name=diver_name).exists():
-            return JsonResponse({"message": "Diver already exists"}, status=400)
-
-        try:
-            # Create a new Diver instance
-            diver = Diver(name=diver_name)
-            diver.save()
-
-            # Return a success response
-            return JsonResponse({"message": "Diver added successfully"}, status=200)
-
-        except Exception as e:
-            # Handle any exceptions that occur
-            return JsonResponse({"message": str(e)}, status=500)
-
-    # If not a POST request, you might redirect or show an error
-    return JsonResponse({"message": "Invalid request"}, status=400)
+        form = DiverForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data["name"]
+            if Diver.objects.filter(name__iexact=name).exists():
+                # Directly return the specific error message
+                return JsonResponse(
+                    {"status": "error", "message": "This diver already exists."},
+                    status=400,
+                )
+            form.save()
+            return JsonResponse(
+                {"status": "success", "message": "Diver added successfully!"}
+            )
+        else:
+            # Generic form error
+            return JsonResponse(
+                {"status": "error", "message": "Invalid input."}, status=400
+            )
+    else:
+        # Not a POST request
+        return JsonResponse(
+            {"status": "error", "message": "Invalid request method."}, status=400
+        )
 
 
 def get_creatures_from_sheet():

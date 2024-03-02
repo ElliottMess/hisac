@@ -46,18 +46,6 @@ footer {
     /* float: center; */
 }
 
-.sidebar-expanded {
-    width: 100%;
-    }
-
-.sidebar-collapsed {
-    position: fixed;
-    right: 10px;
-    width: 50px;
-    /* Collapsed width */
-    /* Additional styling */
-}
-
 .messages .message.success {
     color: green;
 }

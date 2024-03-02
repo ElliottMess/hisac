@@ -1,16 +1,9 @@
-<h2>Add New Diver</h2>
-<div id="message-box"></div> <!-- Message box for displaying responses -->
+<h2>Add diver</h2>
 
-<form method="post" id="add_diver">
-    {% csrf_token %}
-    <label for="diver_name">Name:</label><br>
-    <input type="text" id="diver_name" name="diver_name" required><br>
-    <!-- Add other fields as needed -->
-    <input type="submit" value="Add Diver">
-</form>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {        // Handling add_diver form
-        handleFormSubmit('add_diver', "{% url 'add_diver' %}");
-    });
-</script>
+<div class="mb-4">
+    <form method="post" id="add_diver">
+        {% csrf_token %}
+        <input type="text" id="name_diver" name="name_diver" placeholder="Name"><br>
+        <input type="submit" value="Add diver"><br>
+    </form>
+</div>

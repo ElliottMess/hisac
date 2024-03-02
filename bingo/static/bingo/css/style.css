@@ -46,18 +46,19 @@ footer {
     /* float: center; */
 }
 
-.sidebar-expanded {
-    width: 100%;
-    }
-
-.sidebar-collapsed {
-    position: fixed;
-    right: 10px;
-    width: 50px;
-    /* Collapsed width */
-    /* Additional styling */
-}
-
 .messages .message.success {
     color: green;
+}
+
+select {
+    width: 100%;
+    box-sizing: border-box; /* This ensures padding and border are included in the total width */
+    -webkit-appearance: none; /* Improves appearance on iOS */
+    appearance: none; /* Standardizes appearance across browsers */
+    /* Optional: Add more styles here to customize the appearance of all select elements */
+}
+
+.select-item{
+    width: 90%;
+    box-sizing: border-box; 
 }

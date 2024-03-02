@@ -3,14 +3,10 @@ from django.db import models
 
 
 class Diver(models.Model):
-    name = models.CharField(max_length=100)
-    # Other fields...
-
-    class Meta:
-        ordering = ["name"]
+    name = models.CharField(max_length=100, unique=True)  # Ensure names are unique
 
     def __str__(self):
-        return self.name if self.name else "No User"
+        return self.name
 
 
 class Creature(models.Model):

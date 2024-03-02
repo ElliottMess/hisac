@@ -10,13 +10,13 @@
 <form method="post" id="add_observation">
     {% csrf_token %}
 
-    <select id="diver" name="diver">
+    <select id="diver" name="diver" class="select-item">
         <option value="">Select a diver</option>
         {% for diver in divers %}
         <option value="{{ diver.id }}">{{ diver.name }}</option>
         {% endfor %}
     </select><br>
-    <select id="creature" name="creature">
+    <select id="creature" name="creature" class="select-item">
         <option value="">Select a species</option>
         {% for creature in creatures %}
         <option value="{{ creature.species }}">{{ creature.species }} ({{ creature.category }}) - {{creature.points}} points</option>

@@ -20,15 +20,3 @@ $(document).ready(function () {
     $('.tab[data-period="month"]').click();
 
 });
-
-// Sidebar toggle
-// $(document).ready(function toggleSidebar() {
-//     var sidebar = document.getElementById("sidebar");
-//     if (sidebar.classList.contains("sidebar-collapsed")) {
-//         sidebar.classList.remove("sidebar-collapsed");
-//         sidebar.classList.add("sidebar-expanded");
-//     } else {
-//         sidebar.classList.remove("sidebar-expanded");
-//         sidebar.classList.add("sidebar-collapsed");
-//     }
-// });
