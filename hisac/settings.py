@@ -18,7 +18,7 @@ from pathlib import Path
 from django.conf import settings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-STATIC_ROOT = "/home/hisac/hisac/static"
+STATIC_ROOT = "/home/hisac/static"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/f
@@ -121,7 +121,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "staticfiles"),
+    os.path.join(BASE_DIR, "static"),
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
