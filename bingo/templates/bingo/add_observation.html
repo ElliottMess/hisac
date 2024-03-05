@@ -1,4 +1,5 @@
 <h2>Add Observation</h2>
+{% load static %}
 {% if messages %}
 <div class="messages">
     {% for message in messages %}
@@ -6,7 +7,6 @@
     {% endfor %}
 </div>
 {% endif %}
-<div class="mb-4">
 <form method="post" id="add_observation">
     {% csrf_token %}
 
@@ -19,17 +19,21 @@
     <select id="creature" name="creature" class="select-item">
         <option value="">Select a species</option>
         {% for creature in creatures %}
-        <option value="{{ creature.species }}">{{ creature.species }} ({{ creature.category }}) - {{creature.points}} points</option>
+        <option value="{{ creature.species }}">{{ creature.species }} ({{ creature.category }}) -
+            {{creature.points}} points</option>
         {% endfor %}
     </select><br>
-
+    <!-- <select id="booster" name="booster" class="select-item" multiple>
+        <option value="">Select boosters (optional)</option>
+        {% for booster in boosters %}
+        <option value="{{ booster.id }}">{{ booster.booster }} (x{{ booster.coefficient }})</option>
+        {% endfor %}
+    </select><br> -->
     <label for="date_observed">Date observed:</label>
     <input type="date" id="date_observed" name="date_observed"><br>
     <input type="submit" value="Submit Observation"><br>
 </form>
-</div>
 <div id="message-box"></div>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Handling add_observation form
@@ -52,4 +56,21 @@
 
     today = yyyy + '-' + mm + '-' + dd;
     document.getElementById('date_observed').value = today;
+
+    document.getElementById('add_observation').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var data = new FormData(this);
+        fetch("{% url 'add_observation' %}", {
+            method: 'POST',
+            body: data,
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Display the success message
+                alert(data.message);
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+
 </script>

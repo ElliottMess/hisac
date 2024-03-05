@@ -7,25 +7,30 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 
 from .forms import DiverForm
-from .models import Creature, Diver, Observation
+from .models import Booster, Creature, Diver, Observation
 
 
 def one_page(request):
+    sync_boosters_from_sheet()
+    sync_creatures_from_sheet()
+
     last_30_observations = Observation.objects.all().order_by("-date_observed")[:30]
     creatures = Creature.objects.all()  # Assuming Creature is your model
     divers = Diver.objects.all()  # Assuming Diver is your model
+    boosters = Booster.objects.all()  # Assuming Booster is your model
 
     context = {
         "observations": last_30_observations,
         "creatures": creatures,
         "divers": divers,
         "diver_form": DiverForm(),
+        "boosters": boosters,
     }
 
     return render(request, "bingo/one_page.html", context)
@@ -105,79 +110,163 @@ def add_diver(request):
         )
 
 
-def get_creatures_from_sheet():
-    service_account_file = "hisac/bingo-408514-4bd65e543418.json"
+# def get_creatures_from_sheet():
+#     service_account_file = "hisac/bingo-408514-4bd65e543418.json"
 
-    # Define the scope and create credentials
+#     # Define the scope and create credentials
+#     scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+#     creds = Credentials.from_service_account_file(service_account_file, scopes=scopes)
+
+#     # Build the service
+#     service = build("sheets", "v4", credentials=creds)
+
+#     # Specify your Google Sheet ID and the range to read
+#     spreadsheet_id = "1qAM8jLKCEASjyBjVTqXLgt8YjJRm9OtlIzGQ_xuiGeg"
+#     range_name = "Sheet1!A2:D"  # Adjust as per your sheet's structure
+
+#     # Make the API request
+#     sheet = service.spreadsheets()
+#     result = (
+#         sheet.values().get(spreadsheetId=spreadsheet_id, range=range_name).execute()
+#     )
+#     values = result.get("values", [])
+
+#     # Define your column headers here (adjust as per your sheet's actual headers)
+#     headers = ["species", "latin_name", "points", "category"]
+
+#     if not values:
+#         print("No data found.")
+#         return []
+#     else:
+#         # Convert each row into a dictionary
+#         creatures = []
+#         for row in values:
+#             # Create a dictionary for each row, zip with headers
+#             creature = dict(zip(headers, row))
+#             creatures.append(creature)
+
+#         return creatures
+
+
+# def get_booster_from_sheet():
+#     service_account_file = "hisac/bingo-408514-4bd65e543418.json"
+
+#     # Define the scope and create credentials
+#     scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+#     creds = Credentials.from_service_account_file(service_account_file, scopes=scopes)
+
+#     # Build the service
+#     service = build("sheets", "v4", credentials=creds)
+
+#     # Specify your Google Sheet ID and the range to read
+#     spreadsheet_id = "1qAM8jLKCEASjyBjVTqXLgt8YjJRm9OtlIzGQ_xuiGeg"
+#     range_name = "Sheet1!F2:G"  # Adjust as per your sheet's structure
+
+#     # Make the API request
+#     sheet = service.spreadsheets()
+#     result = (
+#         sheet.values().get(spreadsheetId=spreadsheet_id, range=range_name).execute()
+#     )
+#     values = result.get("values", [])
+
+#     # Define your column headers here (adjust as per your sheet's actual headers)
+#     headers = ["boosters", "coefficient"]
+
+#     if not values:
+#         print("No data found.")
+#         return []
+#     else:
+#         # Convert each row into a dictionary
+#         boosters = []
+#         for row in values:
+#             # Create a dictionary for each row, zip with headers
+#             booster = dict(zip(headers, row))
+#             boosters.append(booster)
+
+#         return boosters
+
+
+def sync_boosters_from_sheet():
+    service_account_file = "hisac/bingo-408514-4bd65e543418.json"
     scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
     creds = Credentials.from_service_account_file(service_account_file, scopes=scopes)
-
-    # Build the service
     service = build("sheets", "v4", credentials=creds)
 
-    # Specify your Google Sheet ID and the range to read
+    # The ID and range of your Google Sheet.
     spreadsheet_id = "1qAM8jLKCEASjyBjVTqXLgt8YjJRm9OtlIzGQ_xuiGeg"
-    range_name = "Sheet1!A2:D"  # Adjust as per your sheet's structure
+    range_name = "Sheet1!F2:G"  # Adjust as per your sheet's structure
 
-    # Make the API request
     sheet = service.spreadsheets()
     result = (
         sheet.values().get(spreadsheetId=spreadsheet_id, range=range_name).execute()
     )
     values = result.get("values", [])
 
-    # Define your column headers here (adjust as per your sheet's actual headers)
-    headers = ["species", "latin_name", "points", "category"]
+    if not values:
+        print("No data found in sheet.")
+        return
+
+    # Assuming your Google Sheet has two columns: Name and Score
+    for row in values:
+        # Create or update your model instance here
+        booster, coefficient = row
+        obj, created = Booster.objects.update_or_create(
+            booster=booster,
+            defaults={"coefficient": coefficient},
+        )
+
+
+def sync_creatures_from_sheet():
+    service_account_file = "hisac/bingo-408514-4bd65e543418.json"
+    scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+    creds = Credentials.from_service_account_file(service_account_file, scopes=scopes)
+    service = build("sheets", "v4", credentials=creds)
+
+    # The ID and range of your Google Sheet.
+    spreadsheet_id = "1qAM8jLKCEASjyBjVTqXLgt8YjJRm9OtlIzGQ_xuiGeg"
+    range_name = "Sheet1!A2:D"  # Adjust as per your sheet's structure
+
+    sheet = service.spreadsheets()
+    result = (
+        sheet.values().get(spreadsheetId=spreadsheet_id, range=range_name).execute()
+    )
+    values = result.get("values", [])
+    #     headers = ["species", "latin_name", "points", "category"]
 
     if not values:
-        print("No data found.")
-        return []
-    else:
-        # Convert each row into a dictionary
-        creatures = []
-        for row in values:
-            # Create a dictionary for each row, zip with headers
-            creature = dict(zip(headers, row))
-            creatures.append(creature)
+        print("No data found in sheet.")
+        return
 
-        return creatures
+    # Assuming your Google Sheet has two columns: Name and Score
+    for row in values:
+        # Create or update your model instance here
+        species, latin_name, points, category = row
+        obj, created = Creature.objects.update_or_create(
+            species=species,
+            latin_name=latin_name,
+            points=points,
+            defaults={"category": category},
+        )
 
 
 def add_observation(request):
+
+    sync_boosters_from_sheet()
+    sync_creatures_from_sheet()
+
     divers = Diver.objects.all()
 
-    creatures = get_creatures_from_sheet()
+    creatures = Creature.objects.all()
 
-    # Add or update creatures in the Creature table
-    for creature in creatures:
-        try:
-            existing_creature = Creature.objects.get(species=creature["species"])
-            if (
-                existing_creature.latin_name != creature["latin_name"]
-                or existing_creature.points != creature["points"]
-                or existing_creature.category != creature["category"]
-            ):
-                existing_creature.latin_name = creature["latin_name"]
-                existing_creature.points = creature["points"]
-                existing_creature.category = creature["category"]
-                existing_creature.save()
-        except Creature.DoesNotExist:
-            Creature.objects.create(
-                species=creature["species"],
-                latin_name=creature["latin_name"],
-                points=creature["points"],
-                category=creature["category"],
-            )
+    boosters = Booster.objects.all()
 
     # Now, fetch and group creatures by categories for the dropdown
-    grouped_creatures = Creature.objects.prefetch_related("category").order_by(
-        "category__name", "species"
-    )
+    grouped_creatures = Creature.objects.order_by("category", "species")
 
     # Prepare categories and their creatures for the template
     categories_with_creatures = {}
     for creature in grouped_creatures:
-        category_name = creature.category.name
+        category_name = creature.category
         if category_name not in categories_with_creatures:
             categories_with_creatures[category_name] = []
         categories_with_creatures[category_name].append(creature)
@@ -185,6 +274,7 @@ def add_observation(request):
     if request.method == "POST":
         diver_id = request.POST.get("diver")
         creature_id = request.POST.get("creature")
+        booster_ids = request.POST.getlist("booster")
         try:
             date_observed = datetime.strptime(
                 request.POST.get("date_observed"), "%Y-%m-%d"
@@ -217,10 +307,24 @@ def add_observation(request):
                 status=400,
             )
 
+            # Calculate total coefficient based on selected boosters
+        total_coefficient = 1.0
+        for booster_id in booster_ids:
+            booster = get_object_or_404(
+                Booster, id=booster_id
+            )  # Assuming you have a Booster model or replace with sheet logic
+            total_coefficient *= booster.coefficient
+
+        # Create the observation with the calculated points
+        points_with_boost = creature.points * total_coefficient
+
         try:
             # Create a new Diver instance
             observation = Observation(
-                diver=diver, creature=creature, date_observed=date_observed
+                diver=diver,
+                creature=creature,
+                date_observed=date_observed,
+                points=points_with_boost,
             )
             observation.save()
 

@@ -1,0 +1,64 @@
+html {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    max-width: 800px; /* Limits the width of the body to 1200px */
+    margin: 0 auto; /* Centers the content horizontally if the view is wider than 1200px */
+    display: flex;
+    flex-direction: column; /* Aligns children elements vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    text-align: center; /* Ensures text is centered within its container */
+}
+
+footer {
+    margin-top: auto; /* Pushes the footer to the bottom of the viewport if the content is not tall enough */
+}
+
+.div-class {
+    margin: 20px; /* Adds 20px of margin to all sides */
+}
+
+.leaderboard-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.tab {
+    cursor: pointer;
+    display: inline-block;
+    padding: 10px;
+    margin-right: 5px;
+    background-color: #5b2d80;
+    color: #ffffff;
+}
+
+.tab.active {
+    background-color: #16807f;
+}
+
+.main-content {
+    width: 100%;
+    /* Removed float:center; because it's not a valid value */
+}
+
+.messages .message.success {
+    color: green;
+}
+
+select {
+    width: 100%;
+    box-sizing: border-box; /* This ensures padding and border are included in the total width */
+    -webkit-appearance: none; /* Improves appearance on iOS */
+    appearance: none; /* Standardizes appearance across browsers */
+    /* Optional: Add more styles here to customize the appearance of all select elements */
+}
+
+.select-item {
+    width: 90%;
+    box-sizing: border-box; 
+}

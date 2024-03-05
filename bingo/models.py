@@ -23,10 +23,22 @@ class Creature(models.Model):
         return self.species
 
 
+class Booster(models.Model):
+    booster = models.CharField(max_length=100, null=True)
+    coefficient = models.FloatField()
+
+    class Meta:
+        ordering = ["coefficient"]
+
+    def __str__(self):
+        return self.booster
+
+
 class Observation(models.Model):
     diver = models.ForeignKey(Diver, on_delete=models.CASCADE)
     creature = models.ForeignKey(Creature, on_delete=models.CASCADE)
     date_observed = models.DateField()
+    points = models.FloatField()
 
     # Other fields...
 
