@@ -1,9 +1,12 @@
-body, html {
+html {
     height: 100%;
     margin: 0;
 }
 
 body {
+    max-width: 800px; /* Limits the width of the body to 1200px */
+    max-height: 100%; /* Optional: You can specify a max height */
+    margin: 0 auto; /* Centers the content horizontally if the view is wider than 1200px */
     display: flex;
     flex-direction: column; /* Aligns children elements vertically */
     justify-content: center; /* Center vertically */
@@ -19,7 +22,6 @@ footer {
     margin: 20px; /* Adds 20px of margin to all sides */
 }
 
-
 .leaderboard-section {
     display: flex;
     flex-direction: column;
@@ -27,14 +29,13 @@ footer {
     padding: 20px;
 }
 
-
 .tab {
     cursor: pointer;
     display: inline-block;
     padding: 10px;
     margin-right: 5px;
     background-color: #5b2d80;
-    color : #ffffff;
+    color: #ffffff;
 }
 
 .tab.active {
@@ -43,7 +44,7 @@ footer {
 
 .main-content {
     width: 100%;
-    /* float: center; */
+    /* Removed float:center; because it's not a valid value */
 }
 
 .messages .message.success {
@@ -58,7 +59,7 @@ select {
     /* Optional: Add more styles here to customize the appearance of all select elements */
 }
 
-.select-item{
+.select-item {
     width: 90%;
     box-sizing: border-box; 
 }
