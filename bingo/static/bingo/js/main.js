@@ -1,55 +1,51 @@
-// Table tabs
-$(document).ready(function () {
-    $('.tab').click(function () {
-        var period = $(this).data('period');
-        var urlTopDivers = $('.tabs').data('url-top-divers'); // Get the URL from the data attribute
-        // Remove 'active' class from all tabs, then add it to the clicked tab
-        $('.tab').removeClass('active');
-        $(this).addClass('active');
-
-        // AJAX request to update the content
-        $.ajax({
-            url: urlTopDivers,
-            type: 'get',
-            data: { period: period },
-            success: function (response) {
-                $('#top-divers-container').html(response);
-            }
-        });
-    });
-    $('.tab[data-period="month"]').click();
-
-});
-
-
-function handleFormSubmit(formId, postUrl) {
-    const form = document.getElementById(formId);
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(form);
-        fetch(postUrl, {
-            method: 'POST',
-            body: formData,
-            headers: {'X-CSRFToken': getCookie('csrftoken')}, // Ensure CSRF token is sent
-        })
+document.getElementById('add_observation').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var data = new FormData(this);
+    fetch("{% url 'add_observation' %}", {
+        method: 'POST',
+        body: data,
+    })
         .then(response => response.json())
         .then(data => {
-            document.getElementById('message-box').innerText = data.message;
+            // Display the success message
+            alert(data.message);
         })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('message-box').innerText = 'Failed to add diver.';
-        });
-    });
-}
+        .catch(error => console.error('Error:', error));
+});
 
-// Function to get CSRF token
+// Add the event listener to the add_diver form
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('add_diver').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var data = new FormData(this);
+        fetch("{% url 'add_diver' %}", {
+            method: 'POST',
+            body: data,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'error') {
+                    document.getElementById('diver-form-error').innerText = data.message; // Display error message
+                    document.getElementById('diver-form-success').innerText = ''; // Clear previous success message
+                } else {
+                    document.getElementById('diver-form-success').innerText = data.message; // Display success message
+                    document.getElementById('diver-form-error').innerText = ''; // Clear previous error message
+                    // Optionally, clear the form fields
+                    document.getElementById('add_diver').reset();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+});
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
+            let cookie = cookies[i].trim();
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
