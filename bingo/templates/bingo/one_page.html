@@ -1,102 +1,97 @@
 {% extends 'bingo/base.html' %}
 {% load static %}
 {% block content %}
-<!-- Main Content -->
-
-<div class="page-container"> <!-- Flex container -->
-
-    <!-- Main content -->
-    <div class="main-content">
-        <h2>Top Divers</h2>
-        <div class="tabs" data-url-top-divers="{% url 'top_divers' %}">
-            <div class="tab" data-period="week">This Week</div>
-            <div class="tab active" data-period="month">This Month</div>
-            <div class="tab" data-period="last_six_months">Last 6 months</div>
-            <div class="tab" data-period="ever">Ever</div>
-        </div>
-        <div id="top-divers-container">
-            {% include "bingo/top_divers.html" %}
-        </div>
-
-        <div id="observations-container">
-            {% include "bingo/observations_list.html" %}
-        </div>
-        <div id="add-observation">
-            {% include "bingo/add_observation.html" %}
-        </div>
-        <div id="add-diver">
-            <h2>Add Diver</h2>
-            <div id="diver-form-success" style="color: green;"></div> <!-- Success message placeholder -->
-            <div id="diver-form-error" style="color: red;"></div> <!-- Error message placeholder -->
-            <form method="post" id="add_diver">
-                {% csrf_token %}
-                <input type="text" name="name" placeholder="Diver Name"><br>
-                <input type="submit" value="Add Diver">
-            </form>
-        </div>
-        <div id = "rules">
-            {% include "bingo/rules.html" %}
-
-        </div>
+<div class="main-content">
+    <h2>Top Divers</h2>
+    <div class="tabs" data-url-top-divers="{% url 'top_divers' %}">
+        <div class="tab" data-period="week">This Week</div>
+        <div class="tab active" data-period="month">This Month</div>
+        <div class="tab" data-period="last_six_months">Last 6 months</div>
+        <div class="tab" data-period="ever">Ever</div>
     </div>
-    <script>
-        // Add the event listener to the add_observation form
-        document.getElementById('add_observation').addEventListener('submit', function (e) {
+    <div id="top-divers-container">
+        {% include "bingo/top_divers.html" %}
+    </div>
+
+    <div id="observations-container">
+        {% include "bingo/observations_list.html" %}
+    </div>
+    <div id="add-observation">
+        {% include "bingo/add_observation.html" %}
+    </div>
+    <div id="add-diver">
+        <h2>Add Diver</h2>
+        <div id="diver-form-success" style="color: green;"></div> <!-- Success message placeholder -->
+        <div id="diver-form-error" style="color: red;"></div> <!-- Error message placeholder -->
+        <form method="post" id="add_diver">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Diver Name"><br>
+            <input type="submit" value="Add Diver">
+        </form>
+    </div>
+    <div id="rules">
+        {% include "bingo/rules.html" %}
+
+    </div>
+</div>
+<script>
+    // Add the event listener to the add_observation form
+    document.getElementById('add_observation').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var data = new FormData(this);
+        fetch("{% url 'add_observation' %}", {
+            method: 'POST',
+            body: data,
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Display the success message
+                alert(data.message);
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    // Add the event listener to the add_diver form
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('add_diver').addEventListener('submit', function (e) {
             e.preventDefault();
             var data = new FormData(this);
-            fetch("{% url 'add_observation' %}", {
+            fetch("{% url 'add_diver' %}", {
                 method: 'POST',
                 body: data,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
             })
                 .then(response => response.json())
                 .then(data => {
-                    // Display the success message
-                    alert(data.message);
+                    if (data.status === 'error') {
+                        document.getElementById('diver-form-error').innerText = data.message; // Display error message
+                        document.getElementById('diver-form-success').innerText = ''; // Clear previous success message
+                    } else {
+                        document.getElementById('diver-form-success').innerText = data.message; // Display success message
+                        document.getElementById('diver-form-error').innerText = ''; // Clear previous error message
+                        // Optionally, clear the form fields
+                        document.getElementById('add_diver').reset();
+                    }
                 })
                 .catch(error => console.error('Error:', error));
         });
-
-        // Add the event listener to the add_diver form
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('add_diver').addEventListener('submit', function (e) {
-                e.preventDefault();
-                var data = new FormData(this);
-                fetch("{% url 'add_diver' %}", {
-                    method: 'POST',
-                    body: data,
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken'),
-                    },
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'error') {
-                            document.getElementById('diver-form-error').innerText = data.message; // Display error message
-                            document.getElementById('diver-form-success').innerText = ''; // Clear previous success message
-                        } else {
-                            document.getElementById('diver-form-success').innerText = data.message; // Display success message
-                            document.getElementById('diver-form-error').innerText = ''; // Clear previous error message
-                            // Optionally, clear the form fields
-                            document.getElementById('add_diver').reset();
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-            });
-        });
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    let cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
+    });
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
                 }
             }
-            return cookieValue;
         }
-    </script>
+        return cookieValue;
+    }
+</script>
 
-    {% endblock %}
+{% endblock %}
