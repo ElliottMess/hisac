@@ -1,11 +1,11 @@
 <div>
+    <button onclick="filterTimeFrame('this_round')" class="tab">This Round</button>
     <button onclick="filterTimeFrame('week')" class="tab">Week</button>
     <button onclick="filterTimeFrame('month')" class="tab">Month</button>
     <button onclick="filterTimeFrame('last_6_months')" class="tab">Last 6 Months</button>
     <button onclick="filterTimeFrame('ever')" class="tab">Ever</button>
 </div>
 <div class="table-responsive">
-
     <table id="topDivers" class="table table-striped table-bordered table-hover table-sm">
         <thead>
             <tr>
@@ -13,15 +13,22 @@
                 <th>Total Points</th>
             </tr>
         <tbody>
-
             {% for diver in top_divers %}
             <tr>
-                <td>{{ diver.diver__name }}</td>
+                <td>
+                    {% if forloop.counter == 1 %}
+                    🥇 <!-- Gold Medal Emoji -->
+                    {% elif forloop.counter == 2 %}
+                    🥈 <!-- Silver Medal Emoji -->
+                    {% elif forloop.counter == 3 %}
+                    🥉 <!-- Bronze Medal Emoji -->
+                    {% endif %}
+                    {{ diver.diver__name }}
+                </td>
                 <td>{{ diver.total_points }}</td>
             </tr>
             {% endfor %}
         </tbody>
-
     </table>
 </div>
 

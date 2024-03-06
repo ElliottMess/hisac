@@ -25,10 +25,10 @@ def one_page(request):
     creatures = Creature.objects.all()  # Assuming Creature is your model
     divers = Diver.objects.all()  # Assuming Diver is your model
     boosters = Booster.objects.all()  # Assuming Booster is your model
-    time_frame = request.GET.get("time", "month")
+    time_frame = request.GET.get("time", "this_round")
     top_divers = calculate_top_divers(
         time_frame
-    )  # You'd have a function to calculate this based on 'time_frame'.
+    )
 
     context = {
         "observations": last_30_observations,
@@ -51,6 +51,8 @@ def get_start_date(time_frame):
         return timezone.now().date() - timedelta(days=30)
     elif time_frame == "last_6_months":
         return timezone.now().date() - timedelta(days=180)
+    elif time_frame == "this_round":
+        return datetime(2024, 3, 6).date()  # Modify the date to the desired cutoff date
     return None  # for 'ever'
 
 
@@ -59,6 +61,8 @@ def calculate_top_divers(time_frame):
 
     if start_date:
         observations = Observation.objects.filter(date_observed__gte=start_date)
+    elif time_frame == "this_round":
+                observations = Observation.objects.filter(date_observed__range=(start_date, datetime(2024, 4, 21).date()))
     else:  # 'ever'
         observations = Observation.objects.all()
 
@@ -71,7 +75,7 @@ def calculate_top_divers(time_frame):
 
 
 def top_divers(request):
-    time_frame = request.GET.get("time", "month")
+    time_frame = request.GET.get("time", "this_round")
     top_divers = calculate_top_divers(time_frame)
 
     return render(
@@ -79,90 +83,6 @@ def top_divers(request):
         "bingo/top_divers.html",
         {"top_divers": top_divers, "time_frame": time_frame},
     )
-
-
-# def top_divers_view(request):
-#     time_period = request.GET.get("period", "month")  # Default to 'month'
-#     # Logic to get top_divers data based on the time period
-#     if time_period == "week":
-#         start_date = datetime.now() - timedelta(days=7)
-#     elif time_period == "last_six_months":
-#         start_date = datetime.now() - timedelta(days=180)
-#     elif time_period == "ever":
-#         start_date = datetime.now() - timedelta(days=180000)
-#     else:  # default is month
-#         start_date = datetime.now() - timedelta(days=30)
-
-#     if request.is_ajax():
-#         html = render_to_string(
-#             "bingo/top_divers.html",
-#             {"top_divers": top_divers, "time_period": time_period},
-#             request,
-#         )
-#         return HttpResponse(html)
-
-
-# def top_divers(request):
-#     time_period = request.GET.get(
-#         "time_period", "month"
-#     )  # Make sure this matches your AJAX call
-#     # Logic to get top_divers data based on the time period
-#     if time_period == "week":
-#         start_date = timezone.now() - timedelta(days=7)
-#     elif time_period == "last_six_months":
-#         start_date = timezone.now() - timedelta(days=180)
-#     elif time_period == "ever":
-#         start_date = timezone.now() - timedelta(days=180000)
-#     else:  # default is month
-#         start_date = timezone.now() - timedelta(days=30)
-
-#     top_divers = (
-#         Observation.objects.filter(date_observed__gte=start_date)
-#         .values("diver__name")
-#         .annotate(total_points=Sum("creature__points"))
-#         .order_by("-total_points")[:10]
-#     )
-
-#     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-#         html = render_to_string(
-#             "bingo/top_divers.html",  # Assuming you have a separate template for just the table
-#             {"top_divers": top_divers, "time_period": time_period},
-#             request,
-#         )
-#         return HttpResponse(html)
-#     else:
-#         return render(
-#             request,
-#             "bingo/top_divers.html",
-#             {"top_divers": top_divers, "time_period": time_period},
-#         )
-
-
-# def top_divers(request):
-#     time_period = request.GET.get("period", "month")
-
-#     # Set the start date based on the selected time period
-#     if time_period == "week":
-#         start_date = datetime.now() - timedelta(days=7)
-#     elif time_period == "last_six_months":
-#         start_date = datetime.now() - timedelta(days=180)
-#     elif time_period == "ever":
-#         start_date = datetime.now() - timedelta(days=180000)
-#     else:  # default is month
-#         start_date = datetime.now() - timedelta(days=30)
-
-#     # Query to calculate the top 10 divers based on observations since start_date
-#     top_divers = (
-#         Observation.objects.filter(date_observed__gte=start_date)
-#         .values("diver__name")
-#         .annotate(total_points=Sum("creature__points"))
-#         .order_by("-total_points")[:10]
-#     )
-
-#     context = {"top_divers": top_divers, "time_period": time_period}
-
-#     return render(request, "bingo/top_divers.html", context)
-
 
 def add_diver(request):
     if request.method == "POST":
