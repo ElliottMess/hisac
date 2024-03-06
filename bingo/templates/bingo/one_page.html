@@ -2,13 +2,6 @@
 {% block content %}
 {% load static %}
 <div class="main-content">
-    <h2>Top Divers</h2>
-    <div class="tabs" data-url-top-divers="{% url 'top_divers' %}">
-        <div class="tab" data-period="week">This Week</div>
-        <div class="tab active" data-period="month">This Month</div>
-        <div class="tab" data-period="last_six_months">Last 6 months</div>
-        <div class="tab" data-period="ever">Ever</div>
-    </div>
     <div id="top-divers-container">
         {% include "bingo/top_divers.html" %}
     </div>
