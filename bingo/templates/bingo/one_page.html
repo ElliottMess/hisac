@@ -20,14 +20,7 @@
         {% include "bingo/add_observation.html" %}
     </div>
     <div id="add-diver">
-        <h2>Add Diver</h2>
-        <div id="diver-form-success" style="color: green;"></div> <!-- Success message placeholder -->
-        <div id="diver-form-error" style="color: red;"></div> <!-- Error message placeholder -->
-        <form method="post" id="add_diver">
-            {% csrf_token %}
-            <input type="text" name="name" placeholder="Diver Name"><br>
-            <input type="submit" value="Add Diver">
-        </form>
+        {% include "bingo/add_diver.html" %}
     </div>
     <div id="rules">
         {% include "bingo/rules.html" %}
@@ -35,6 +28,5 @@
     </div>
 </div>
 <script>
-    
 </script>
 {% endblock %}

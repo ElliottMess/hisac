@@ -1,12 +1,12 @@
-<h2>Add diver</h2>
-
-<div class="mb-4">
-    <form method="post" id="add_diver">
-        {% csrf_token %}
-        <input type="text" id="name_diver" name="name_diver" placeholder="Name"><br>
-        <input type="submit" value="Add diver"><br>
-    </form>
-    <script>
+<h2>Add Diver</h2>
+<div id="diver-form-success" style="color: green;"></div> <!-- Success message placeholder -->
+<div id="diver-form-error" style="color: red;"></div> <!-- Error message placeholder -->
+<form method="post" id="add_diver">
+    {% csrf_token %}
+    <input type="text" name="name" placeholder="Diver Name"><br>
+    <input type="submit" value="Add Diver">
+</form>
+<script>
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('add_diver').addEventListener('submit', function (e) {
                 e.preventDefault();

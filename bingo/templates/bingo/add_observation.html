@@ -7,6 +7,8 @@
     {% endfor %}
 </div>
 {% endif %}
+<div id="observation-form-success" style="color: green;"></div> <!-- Success message placeholder -->
+<div id="observation-form-error" style="color: red;"></div> <!-- Error message placeholder -->
 <form method="post" id="add_observation">
     {% csrf_token %}
 
@@ -33,7 +35,6 @@
     <input type="date" id="date_observed" name="date_observed"><br>
     <input type="submit" value="Submit Observation"><br>
 </form>
-<div id="message-box"></div>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Handling add_observation form
@@ -57,20 +58,49 @@
     today = yyyy + '-' + mm + '-' + dd;
     document.getElementById('date_observed').value = today;
 
-    document.getElementById('add_observation').addEventListener('submit', function (e) {
-        e.preventDefault();
-        var data = new FormData(this);
-        fetch("{% url 'add_observation' %}", {
-            method: 'POST',
-            body: data,
-        })
-            .then(response => response.json())
-            .then(data => {
-                // Display the success message
-                alert(data.message);
-            })
-            .catch(error => console.error('Error:', error));
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('add_observation').addEventListener('submit', function (e) {
+                e.preventDefault();
+                var data = new FormData(this);
+                fetch("{% url 'add_observation' %}", {
+                    method: 'POST',
+                    body: data,
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'error') {
+                            document.getElementById('observation-form-error').innerText = data.message; // Display error message
+                            document.getElementById('observation-form-success').innerText = ''; // Clear previous success message
+                        } else {
+                            document.getElementById('observation-form-success').innerText = data.message; // Display success message
+                            document.getElementById('observation-form-error').innerText = ''; // Clear previous error message
+                            // Optionally, clear the form fields
+                            document.getElementById('add_observation').reset();
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+
+
+    // document.getElementById('add_observation').addEventListener('submit', function (e) {
+    //     e.preventDefault();
+    //     var data = new FormData(this);
+    //     fetch("{% url 'add_observation' %}", {
+    //         method: 'POST',
+    //         body: data,
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             // Update the message-box div with the success message
+    //             var messageBox = document.getElementById('message-box');
+    //             messageBox.innerHTML = `<div class="message success">${data.message}</div>`; // Adjust the class as needed
+    //         })
+    //         .catch(error => console.error('Error:', error));
+    // });
 
 
 </script>
