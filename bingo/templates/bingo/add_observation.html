@@ -25,12 +25,11 @@
             {{creature.points}} points</option>
         {% endfor %}
     </select><br>
-    <!-- <select id="booster" name="booster" class="select-item" multiple>
-        <option value="">Select boosters (optional)</option>
+    <select id="booster" name="booster" class="select-item" multiple = "multiple">
         {% for booster in boosters %}
         <option value="{{ booster.id }}">{{ booster.booster }} (x{{ booster.coefficient }})</option>
         {% endfor %}
-    </select><br> -->
+    </select><br>
     <label for="date_observed">Date observed:</label>
     <input type="date" id="date_observed" name="date_observed"><br>
     <input type="submit" value="Submit Observation"><br>
@@ -40,13 +39,16 @@
         // Handling add_observation form
         handleFormSubmit('add_observation', "{% url 'add_observation' %}");
     });
-    // Initialize Select2 for the creature dropdown
     $('#creature').select2({
         placeholder: "Select a species",
         allowClear: true
     });
     $('#diver').select2({
         placeholder: "Select a diver",
+        allowClear: true
+    });
+    $('#booster').select2({
+        placeholder: "Select boosters (optional)",
         allowClear: true
     });
     // Set today's date as the default for date_observed

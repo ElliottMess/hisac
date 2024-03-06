@@ -8,6 +8,7 @@
                         <th>Creature</th>
                         <th>Observer</th>
                         <th>Date observed</th>
+                        <th>Total points (with boosters)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -16,6 +17,7 @@
                             <td>{{ observation.creature }}</td>
                             <td>{{ observation.diver.name }}</td>
                             <td>{{ observation.date_observed }}</td>
+                            <td>{{ observation.points }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
