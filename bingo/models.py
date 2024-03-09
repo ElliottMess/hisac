@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-
+from django.utils.timezone import localtime
 
 class Diver(models.Model):
     name = models.CharField(max_length=100, unique=True)  # Ensure names are unique
