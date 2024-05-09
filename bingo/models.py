@@ -40,8 +40,11 @@ class Observation(models.Model):
     date_observed = models.DateField()
     points = models.FloatField()
 
-    # Other fields...
-
+    def __str__(self):
+        date_observed_formatted = localtime(self.date_observed).strftime('%B %d, %Y')
+        
+        # Return a formatted string with the desired fields
+        return f"{self.diver} - {self.creature} on {date_observed_formatted} ({self.points} points)"
 
 class Validation(models.Model):
     observation = models.OneToOneField(Observation, on_delete=models.CASCADE)

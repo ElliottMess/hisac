@@ -62,7 +62,7 @@ def calculate_top_divers(time_frame):
     if start_date:
         observations = Observation.objects.filter(date_observed__gte=start_date)
     elif time_frame == "this_round":
-                observations = Observation.objects.filter(date_observed__range=(start_date, datetime(2024, 4, 21).date()))
+                observations = Observation.objects.filter(date_observed__range=(datetime(2024, 4, 22).date(), datetime(2024, 8, 31).date()))
     else:  # 'ever'
         observations = Observation.objects.all()
 
