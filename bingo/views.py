@@ -52,7 +52,7 @@ def get_start_date(time_frame):
     elif time_frame == "last_6_months":
         return timezone.now().date() - timedelta(days=180)
     elif time_frame == "this_round":
-        return datetime(2024, 3, 6).date()  # Modify the date to the desired cutoff date
+        return datetime(2024, 4, 21).date()  # Modify the date to the desired cutoff date
     return None  # for 'ever'
 
 
@@ -62,7 +62,7 @@ def calculate_top_divers(time_frame):
     if start_date:
         observations = Observation.objects.filter(date_observed__gte=start_date)
     elif time_frame == "this_round":
-                observations = Observation.objects.filter(date_observed__range=(datetime(2024, 4, 22).date(), datetime(2024, 8, 31).date()))
+                observations = Observation.objects.filter(date_observed__range=(start_date, datetime(2024, 8, 31).date()))
     else:  # 'ever'
         observations = Observation.objects.all()
 
