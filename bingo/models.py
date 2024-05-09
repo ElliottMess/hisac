@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.timezone import localtime
 
 
 class Diver(models.Model):
@@ -41,10 +42,9 @@ class Observation(models.Model):
     points = models.FloatField()
 
     def __str__(self):
-        date_observed_formatted = localtime(self.date_observed).strftime('%B %d, %Y')
         
         # Return a formatted string with the desired fields
-        return f"{self.diver} - {self.creature} on {date_observed_formatted} ({self.points} points)"
+        return f"{self.diver} - {self.creature}  ({self.points} points)"
 
 class Validation(models.Model):
     observation = models.OneToOneField(Observation, on_delete=models.CASCADE)
